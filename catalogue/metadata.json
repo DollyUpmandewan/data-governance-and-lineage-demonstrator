@@ -1,0 +1,313 @@
+{
+  "version": 1,
+  "scope": "Synthetic sales demonstrator; local metadata only",
+  "assets": [
+    {
+      "id": "customers",
+      "name": "CRM customers",
+      "source": "CRM export",
+      "owner": {
+        "team": "Customer Operations",
+        "contact": "customer-operations@example.invalid"
+      },
+      "description": "Synthetic customer master; one row per customer.",
+      "path": "data/customers.csv",
+      "classification": "confidential",
+      "access": {
+        "approved_roles": [
+          "data-steward"
+        ],
+        "approval_owner": "Customer Operations",
+        "purpose": "Approved sales analysis only",
+        "retention": "Demo policy: review after 90 days; delete when purpose expires",
+        "controls": [
+          "Local file permissions must be configured separately",
+          "Do not publish row-level customer data"
+        ]
+      },
+      "columns": [
+        {
+          "name": "customer_id",
+          "definition": "Stable customer identifier",
+          "type": "string",
+          "classification": "internal"
+        },
+        {
+          "name": "email",
+          "definition": "Synthetic contact address",
+          "type": "string",
+          "classification": "personal"
+        },
+        {
+          "name": "region",
+          "definition": "Customer sales region",
+          "type": "string",
+          "classification": "internal"
+        }
+      ],
+      "quality_rules": [
+        {
+          "id": "customer-key",
+          "type": "unique",
+          "column": "customer_id"
+        },
+        {
+          "id": "customer-required",
+          "type": "not_null",
+          "column": "customer_id"
+        },
+        {
+          "id": "email-format",
+          "type": "email",
+          "column": "email"
+        }
+      ],
+      "inputs": []
+    },
+    {
+      "id": "products",
+      "name": "Product master",
+      "source": "ERP export",
+      "owner": {
+        "team": "Product Operations",
+        "contact": "product-operations@example.invalid"
+      },
+      "description": "Synthetic product master; prices are in INR.",
+      "path": "data/products.csv",
+      "classification": "internal",
+      "access": {
+        "approved_roles": [
+          "analyst",
+          "data-steward"
+        ],
+        "approval_owner": "Product Operations",
+        "purpose": "Approved sales analysis only",
+        "retention": "Demo policy: review after 90 days; delete when purpose expires",
+        "controls": [
+          "Local file permissions must be configured separately",
+          "Do not publish row-level customer data"
+        ]
+      },
+      "columns": [
+        {
+          "name": "product_id",
+          "definition": "Stable product identifier",
+          "type": "string",
+          "classification": "internal"
+        },
+        {
+          "name": "product_name",
+          "definition": "Display name",
+          "type": "string",
+          "classification": "internal"
+        },
+        {
+          "name": "price",
+          "definition": "Current unit price in INR",
+          "type": "number",
+          "classification": "internal"
+        }
+      ],
+      "quality_rules": [
+        {
+          "id": "product-key",
+          "type": "unique",
+          "column": "product_id"
+        },
+        {
+          "id": "price-positive",
+          "type": "positive",
+          "column": "price"
+        }
+      ],
+      "inputs": []
+    },
+    {
+      "id": "orders",
+      "name": "Sales orders",
+      "source": "Commerce export",
+      "owner": {
+        "team": "Sales Operations",
+        "contact": "sales-operations@example.invalid"
+      },
+      "description": "Synthetic order lines; one row per order.",
+      "path": "data/orders.csv",
+      "classification": "internal",
+      "access": {
+        "approved_roles": [
+          "analyst",
+          "data-steward"
+        ],
+        "approval_owner": "Sales Operations",
+        "purpose": "Approved sales analysis only",
+        "retention": "Demo policy: review after 90 days; delete when purpose expires",
+        "controls": [
+          "Local file permissions must be configured separately",
+          "Do not publish row-level customer data"
+        ]
+      },
+      "columns": [
+        {
+          "name": "order_id",
+          "definition": "Stable order identifier",
+          "type": "string",
+          "classification": "internal"
+        },
+        {
+          "name": "customer_id",
+          "definition": "Customer placing the order",
+          "type": "string",
+          "classification": "internal"
+        },
+        {
+          "name": "product_id",
+          "definition": "Purchased product",
+          "type": "string",
+          "classification": "internal"
+        },
+        {
+          "name": "quantity",
+          "definition": "Number of units",
+          "type": "number",
+          "classification": "internal"
+        }
+      ],
+      "quality_rules": [
+        {
+          "id": "order-key",
+          "type": "unique",
+          "column": "order_id"
+        },
+        {
+          "id": "customer-reference",
+          "type": "foreign_key",
+          "column": "customer_id",
+          "target_asset": "customers",
+          "target_column": "customer_id"
+        },
+        {
+          "id": "product-reference",
+          "type": "foreign_key",
+          "column": "product_id",
+          "target_asset": "products",
+          "target_column": "product_id"
+        },
+        {
+          "id": "quantity-positive",
+          "type": "positive",
+          "column": "quantity"
+        }
+      ],
+      "inputs": []
+    },
+    {
+      "id": "sales",
+      "name": "Enriched sales",
+      "source": "Local Python transformation",
+      "owner": {
+        "team": "Analytics",
+        "contact": "analytics@example.invalid"
+      },
+      "description": "Orders joined to customer region and product price; revenue = quantity * price in INR. No email is included.",
+      "path": "data/sales.csv",
+      "classification": "internal",
+      "access": {
+        "approved_roles": [
+          "analyst",
+          "data-steward"
+        ],
+        "approval_owner": "Analytics",
+        "purpose": "Approved sales analysis only",
+        "retention": "Demo policy: review after 90 days; delete when purpose expires",
+        "controls": [
+          "Local file permissions must be configured separately",
+          "Do not publish row-level customer data"
+        ]
+      },
+      "columns": [
+        {
+          "name": "order_id",
+          "definition": "Source order identifier",
+          "type": "string",
+          "classification": "internal"
+        },
+        {
+          "name": "region",
+          "definition": "Region from customer master",
+          "type": "string",
+          "classification": "internal"
+        },
+        {
+          "name": "product_name",
+          "definition": "Name from product master",
+          "type": "string",
+          "classification": "internal"
+        },
+        {
+          "name": "revenue",
+          "definition": "Quantity multiplied by current product price in INR",
+          "type": "number",
+          "classification": "internal"
+        }
+      ],
+      "quality_rules": [
+        {
+          "id": "sales-key",
+          "type": "unique",
+          "column": "order_id"
+        },
+        {
+          "id": "revenue-positive",
+          "type": "positive",
+          "column": "revenue"
+        }
+      ],
+      "inputs": [
+        "orders",
+        "customers",
+        "products"
+      ]
+    }
+  ],
+  "lineage": [
+    {
+      "target": "sales",
+      "target_column": "order_id",
+      "sources": [
+        "orders.order_id"
+      ],
+      "transformation": "copy"
+    },
+    {
+      "target": "sales",
+      "target_column": "region",
+      "sources": [
+        "orders.customer_id",
+        "customers.customer_id",
+        "customers.region"
+      ],
+      "transformation": "inner join on customer_id; copy region"
+    },
+    {
+      "target": "sales",
+      "target_column": "product_name",
+      "sources": [
+        "orders.product_id",
+        "products.product_id",
+        "products.product_name"
+      ],
+      "transformation": "inner join on product_id; copy name"
+    },
+    {
+      "target": "sales",
+      "target_column": "revenue",
+      "sources": [
+        "orders.quantity",
+        "orders.product_id",
+        "products.product_id",
+        "products.price"
+      ],
+      "transformation": "inner join on product_id; quantity * price"
+    }
+  ]
+}

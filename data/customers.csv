@@ -1,0 +1,3 @@
+customer_id,email,region
+C001,alice@example.invalid,North
+C002,bob@example.invalid,South
