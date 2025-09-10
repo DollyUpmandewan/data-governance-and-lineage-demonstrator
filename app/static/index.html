@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Atlas | Data Governance</title><link rel="stylesheet" href="/static/style.css"><script src="/static/app.js" defer></script></head>
+<body>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<section id="login-screen" class="login-screen">
+<div class="login-story"><div class="brand"><span class="brand-mark">A</span> ATLAS</div><span class="eyebrow">DATA GOVERNANCE WORKSPACE</span><h1>Know your data.<br>Trust its journey.</h1><p>One place to discover datasets, trace their origins, and make accountable access decisions.</p><div class="story-line"><span>01 &nbsp; Discover</span><span>02 &nbsp; Understand</span><span>03 &nbsp; Govern</span></div><div class="login-foot">LOCAL DEPLOYMENT &nbsp; / &nbsp; SYNTHETIC SALES WORKSPACE</div></div>
+<div class="login-panel"><form id="login-form"><span class="eyebrow">WELCOME TO YOUR CATALOGUE</span><h2>Sign in to Atlas</h2><p class="muted">Use an account created by your administrator.</p><label>Username<input id="username" autocomplete="username" required maxlength="80"></label><label>Password<input id="password" type="password" autocomplete="current-password" required maxlength="200"></label><button class="primary" type="submit">Open workspace <span>→</span></button><p id="login-error" class="error" role="alert"></p><p class="small muted">Accounts and permissions are enforced by the application. Source system access is managed separately.</p></form></div>
+</section>
+<div id="workspace" class="workspace" hidden>
+<aside><div class="brand"><span class="brand-mark">A</span> ATLAS</div><div class="workspace-tag">GOVERNANCE / SALES</div><nav aria-label="Main navigation"><button data-view="catalogue" class="active">▦ <span>Data catalogue</span></button><button data-view="sources">⊞ <span>Source connections</span></button><button data-view="lineage">↗ <span>Lineage explorer</span></button><button data-view="quality">◉ <span>Quality monitor</span></button><button data-view="requests">⇄ <span>Access requests</span><span id="pending-count" class="count"></span></button><button data-view="audit" id="audit-nav">≡ <span>Audit trail</span></button><button data-view="purview" id="purview-nav">↗ <span>Microsoft Purview</span></button><button data-view="settings">⚙ <span>Account & team</span></button></nav><div class="sidebar-bottom"><div class="connection"><i></i> Persistent workspace</div><p id="identity"></p><button id="logout" class="subtle">Sign out ↗</button></div></aside>
+<div class="main"><header><div class="breadcrumb">Workspace <span>/</span> <strong id="crumb">Data catalogue</strong></div><span class="environment">LOCAL INSTANCE</span></header><main id="content"></main><footer>ATLAS / METADATA & LINEAGE <span>CSV + operational database · Purpose-based access</span></footer></div>
+</div>
+<dialog id="modal"><div id="modal-content"></div><button id="close-modal" class="subtle">Close</button></dialog>
+</body></html>
