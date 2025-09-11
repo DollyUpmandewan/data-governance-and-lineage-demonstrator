@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: catalogue
+      POSTGRES_USER: catalogue
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U catalogue -d catalogue"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  web:
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://catalogue:${POSTGRES_PASSWORD}@db:5432/catalogue
+      STATE_DIR: /srv/runtime
+      APP_ORIGIN: ${APP_ORIGIN:-http://127.0.0.1:8000}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      SCAN_INTERVAL_SECONDS: ${SCAN_INTERVAL_SECONDS:-300}
+      PURVIEW_ENABLED: ${PURVIEW_ENABLED:-false}
+      PURVIEW_ENDPOINT: ${PURVIEW_ENDPOINT:-}
+      PURVIEW_COLLECTION_ID: ${PURVIEW_COLLECTION_ID:-}
+      PURVIEW_NAMESPACE: ${PURVIEW_NAMESPACE:-atlas-local}
+      PURVIEW_AUTH_MODE: ${PURVIEW_AUTH_MODE:-default}
+      PURVIEW_CREATE_TYPES: ${PURVIEW_CREATE_TYPES:-true}
+      PURVIEW_SYNC_AFTER_SCAN: ${PURVIEW_SYNC_AFTER_SCAN:-false}
+      AZURE_TENANT_ID: ${AZURE_TENANT_ID:-}
+      AZURE_CLIENT_ID: ${AZURE_CLIENT_ID:-}
+      AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET:-}
+    volumes:
+      - source-data:/srv/runtime
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  postgres-data:
+  source-data:
